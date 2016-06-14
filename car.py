@@ -11,8 +11,8 @@ import time
 
 class Car:
     def __init__(self):
-        self.telemetry = [0, 0, 0, 0]
-        self.telemetry_buffer = [0, 0, 0, 0]
+        self.telemetry = [0, 0, 0, 0, 1]
+        self.telemetry_buffer = [0, 0, 0, 0, 1]
 
     def forward(self):
         self.telemetry[0] = 1
@@ -37,6 +37,12 @@ class Car:
     def straight(self):
         self.telemetry[2] = 0
         self.telemetry[3] = 0
+
+    def model_active(self):
+        self.telemetry[4] = 1
+
+    def model_inactive(self):
+        self.telemetry[4] = 0
 
     def has_update(self):
         update = False

@@ -28,7 +28,7 @@ def main(args):
 
     logging.info("Reading first frame.")
     frame = car.get_frame()
-    car.write_controls(payload='0 0 0 0')
+    car.write_controls(payload='0 0 0 0 0')
 
     logging.info("Configuring display.")
     screen = pygame.display.set_mode((frame.shape[1], frame.shape[0]))
@@ -63,6 +63,9 @@ def main(args):
         else:
             car.straight()
 
+        if press[pygame.K_q] == 1:
+            car.model_inactive()
+
         if car.has_update():
             car.write_controls()
 
@@ -71,6 +74,14 @@ def main(args):
             telemetry_array = np.array(car.telemetry)
             np.savez(path+"/frame{0:05d}.npz".format(file_num), image_array, telemetry_array)
             file_num += 1
+
+            if car.model_inactive():
+                for _ in range(5):
+                    image_array = np.reshape(frame, (1, frame.shape[0] * frame.shape[1] * frame.shape[2]))
+                    telemetry_array = np.array(car.telemetry)
+                    np.savez(path+"/frame{0:05d}.npz".format(file_num), image_array, telemetry_array)
+                    file_num += 1
+                return
 
 if __name__ == '__main__':
     try:
