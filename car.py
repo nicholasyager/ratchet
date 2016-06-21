@@ -80,7 +80,7 @@ class RemoteCar(Car):
 
     def write_controls(self, payload=None):
         if not payload:
-            payload = ' '.join(map(str, self.telemetry))
+            payload = bytes(' '.join(map(str, self.telemetry)),encoding="ascii")
         self.controls_connection.write(payload)
         self.controls_connection.flush()
 

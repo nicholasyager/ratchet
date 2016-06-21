@@ -28,7 +28,7 @@ def main(args):
 
     logging.info("Reading first frame.")
     frame = car.get_frame()
-    car.write_controls(payload='0 0 0 0 0')
+    car.write_controls(payload=bytes('0 0 0 0 0', encoding='ascii'))
 
     logging.info("Configuring display.")
     screen = pygame.display.set_mode((frame.shape[1], frame.shape[0]))
@@ -39,7 +39,8 @@ def main(args):
     file_num = 0
     if args['--from']:
         path = args['--dir']+'/'+args['--from'].replace(' ','_')+"."+args['--to'].replace(' ','_')+'.'+args['--run']
-        os.mkdir(path)
+        if not os.path.exists(path):
+            os.mkdir(path)
 
     while True:
         frame = car.get_frame()
@@ -75,7 +76,8 @@ def main(args):
             np.savez(path+"/frame{0:05d}.npz".format(file_num), image_array, telemetry_array)
             file_num += 1
 
-            if car.model_inactive():
+            if car.telemetry[4] == 0:
+                logging.info("Ending session.")
                 for _ in range(5):
                     image_array = np.reshape(frame, (1, frame.shape[0] * frame.shape[1] * frame.shape[2]))
                     telemetry_array = np.array(car.telemetry)
@@ -84,7 +86,5 @@ def main(args):
                 return
 
 if __name__ == '__main__':
-    try:
-        main(docopt(__doc__, version='Remote v0.0.1'))
-    except Exception as e:
-        print(e)
+    main(docopt(__doc__, version='Remote v0.0.1'))
+
