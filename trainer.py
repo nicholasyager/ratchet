@@ -13,7 +13,7 @@ class Model:
         self.inputs = tf.placeholder(tf.float32, [None, input_dim])
         weights = tf.Variable(tf.zeros([input_dim, output_dim]))
         biases = tf.Variable(tf.zeros([output_dim]))
-        outputs = tf.nn.softmax(tf.matmul(self.inputs, weights) + biases)
+        self.outputs = tf.nn.softmax(tf.matmul(self.inputs, weights) + biases)
 
         # Fitness and Training Design
         self.observations = tf.placeholder(tf.float32, [None, output_dim])
@@ -21,7 +21,7 @@ class Model:
         return tf.train.GradientDescentOptimizer(0.5).minimize(cross_entropy)
 
     def softmax_testing(self):
-        correct_prediction = tf.equal(tf.argmax(self.inputs, 1), tf.argmax(self.observations, 1))
+        correct_prediction = tf.equal(tf.argmax(self.outputs, 1), tf.argmax(self.observations, 1))
         return tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
     def __init__(self, name, images, labels):
